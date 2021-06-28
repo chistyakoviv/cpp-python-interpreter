@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <sstream>
 #include "token.h"
@@ -44,10 +46,11 @@ class Lexer
 {
 public:
     Lexer(std::istream& input)
-     : m_Reader(input), m_CurrentChar(m_Reader.Get())
+     : m_Reader(input), m_CurrentChar(m_Reader.Next())
     {
     }
 
+    const Token& GetCurrentToken();
     Token GetNextToken();
     void Advance();
 private:

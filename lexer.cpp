@@ -25,9 +25,7 @@ int Reader::Get()
     char ch = m_Line.get();
 
     if (ch == Eof)
-    {
         return '\n';
-    }
 
     return ch;
 }
@@ -61,6 +59,29 @@ void Reader::NextLine()
 
 Token Lexer::GetNextToken()
 {
+    if (m_CurrentChar == Reader::Eof)
+    {
+        return Token{TokenType::Eof, "Eof"};
+    }
+    else if (std::isdigit(m_CurrentChar))
+    {
+        int value = 0;
+        while (std::isdigit(m_CurrentChar))
+        {
+            value = value * 10 + m_CurrentChar - '0';
+            m_CurrentChar = m_Reader.Get();
+        }
+        return Token{TokenType::INTEGER, value};
+    }
+    else if (m_CurrentChar == '+')
+    {
+        Token token{TokenType::PLUS, '+'};
+        Advance();
+        return token;
+    }
+
+    throw std::runtime_error("Unxpected token");
+
 }
 
 void Lexer::Advance()

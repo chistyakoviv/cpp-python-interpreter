@@ -1,9 +1,16 @@
-#include <variant>
 #include <iostream>
+#include <fstream>
+#include "token.h"
+#include "lexer.h"
 
 int main()
 {
-    std::variant<int, float> v;
-    v = 42;
-    std::cout << std::get<int>(v) << std::endl;
+    std::ifstream file("input.txt");
+    Lexer lexer(file);
+
+    Token t1 = lexer.GetNextToken();
+    Token t2 = lexer.GetNextToken();
+    Token t3 = lexer.GetNextToken();
+
+    std::cout << t1 << t2 << t3 << std::endl;
 }
