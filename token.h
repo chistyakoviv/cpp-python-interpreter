@@ -4,35 +4,50 @@
 #include <string>
 #include <ostream>
 
-enum class TokenType
+namespace Tokens
 {
-    Eof,
-    PLUS,
-    INTEGER
-};
+    struct Interger
+    {
+        int value;
+    };
 
-using TokenValue = std::variant<int, char, std::string>;
+    struct Eof{};
+    struct Plus{};
+}
+
+using TokenType = std::variant<
+    Tokens::Eof,
+    Tokens::Plus,
+    Tokens::Interger
+>;
 
 class Token
 {
 public:
-    Token(TokenType type, TokenValue value)
-        : m_Type(type), m_Value(value)
+    explicit Token(TokenType type)
+        : m_Type(std::move(type))
     {
     }
 
-    TokenType GetType() const
+    template<typename T>
+    bool Is() const
     {
-        return m_Type;
+        return std::holds_alternative<T>(m_Type);
     }
 
-    TokenValue GetValue() const
+    template<typename T>
+    const T& As() const
     {
-        return m_Value;
+        return std::get<T>(m_Type);
+    }
+
+    template<typename T>
+    const T* TryAs() const
+    {
+        return std::get_if<T>(&m_Type);
     }
 private:
     TokenType m_Type;
-    TokenValue m_Value;
 };
 
 std::ostream& operator<<(std::ostream& os, const Token& token);

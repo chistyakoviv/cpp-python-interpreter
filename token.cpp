@@ -2,19 +2,20 @@
 
 std::ostream& operator<<(std::ostream& os, const Token& token)
 {
-    os << "token type: " << static_cast<std::underlying_type<TokenType>::type>(token.GetType()) << " token value: ";
-    if (std::holds_alternative<int>(token.GetValue()))
-    {
-        os << std::get<int>(token.GetValue());
-    }
-    else if (std::holds_alternative<char>(token.GetValue()))
-    {
-        os << std::get<char>(token.GetValue());
-    }
-    else if (std::holds_alternative<std::string>(token.GetValue()))
-    {
-        os << std::get<std::string>(token.GetValue());
-    }
+    #define PRINT_TOKEN_WITH_VALUE(type) if (const type* ptr = token.TryAs<type>()) \
+                                            os << #type << " {" << ptr->value << "}"
+
+    PRINT_TOKEN_WITH_VALUE(Tokens::Interger);
+
+    #undef PRINT_TOKEN_WITH_VALUE
+
+    #define PRINT_TOKEN(type) if (token.Is<type>()) \
+                                os << #type
+
+    PRINT_TOKEN(Tokens::Plus);
+    PRINT_TOKEN(Tokens::Eof);
+
+    #undef PRINT_TOKEN
 
     return os << '\n';
 }

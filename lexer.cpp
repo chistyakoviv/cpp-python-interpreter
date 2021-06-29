@@ -61,23 +61,22 @@ Token Lexer::GetNextToken()
 {
     if (m_CurrentChar == Reader::Eof)
     {
-        return Token{TokenType::Eof, "Eof"};
+        return Token{Tokens::Eof{}};
     }
     else if (std::isdigit(m_CurrentChar))
     {
         int value = 0;
-        while (std::isdigit(m_CurrentChar))
-        {
+        do {
             value = value * 10 + m_CurrentChar - '0';
-            m_CurrentChar = m_Reader.Get();
-        }
-        return Token{TokenType::INTEGER, value};
+            Advance();
+        } while (std::isdigit(m_CurrentChar));
+
+        return Token{Tokens::Interger{value}};
     }
     else if (m_CurrentChar == '+')
     {
-        Token token{TokenType::PLUS, '+'};
         Advance();
-        return token;
+        return Token{Tokens::Plus{}};
     }
 
     throw std::runtime_error("Unxpected token");
