@@ -5,7 +5,7 @@
 
 int main()
 {
-    std::ifstream file("input.txt");
+    std::ifstream file("test.py");
     Lexer lexer(file);
 
     Token t1 = lexer.GetNextToken();
