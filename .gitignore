@@ -1,2 +1,5 @@
 # IDE files
 .vscode
+
+# build directory
+/build
