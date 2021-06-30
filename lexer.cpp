@@ -12,8 +12,6 @@ int Reader::Next()
     if (m_Line >> ch)
         return ch;
 
-    NextLine();
-
     return '\n';
 }
 
@@ -59,28 +57,46 @@ void Reader::NextLine()
 
 Token Lexer::GetNextToken()
 {
-    if (m_CurrentChar == Reader::Eof)
+    while (m_CurrentChar != Reader::Eof)
     {
-        return Token{Tokens::Eof{}};
-    }
-    else if (std::isdigit(m_CurrentChar))
-    {
-        int value = 0;
-        do {
-            value = value * 10 + m_CurrentChar - '0';
+        if (m_CurrentChar == '\n')
+        {
+            m_Reader.NextLine();
+            return Token{Tokens::NewLine{}};
+        }
+        else if (std::isspace(m_CurrentChar))
+        {
+            do
+            {
+                Advance();
+            } while (std::isspace(m_CurrentChar));
+        }
+        else if (std::isdigit(m_CurrentChar))
+        {
+            int value = 0;
+            do
+            {
+                value = value * 10 + m_CurrentChar - '0';
+                Advance();
+            } while (std::isdigit(m_CurrentChar));
+
+            return Token{Tokens::Integer{value}};
+        }
+        else if (m_CurrentChar == '+')
+        {
             Advance();
-        } while (std::isdigit(m_CurrentChar));
+            return Token{Tokens::Plus{}};
+        }
+        else if (m_CurrentChar == '-')
+        {
+            Advance();
+            return Token{Tokens::Minus{}};
+        }
 
-        return Token{Tokens::Interger{value}};
+        throw std::runtime_error("Unxpected token");
     }
-    else if (m_CurrentChar == '+')
-    {
-        Advance();
-        return Token{Tokens::Plus{}};
-    }
 
-    throw std::runtime_error("Unxpected token");
-
+    return Token{Tokens::Eof{}};
 }
 
 void Lexer::Advance()

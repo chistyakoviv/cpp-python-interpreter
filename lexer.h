@@ -15,6 +15,7 @@ public:
 
     int Next();
     int Get();
+    void NextLine();
 
     int GetLineno() const
     {
@@ -33,7 +34,6 @@ public:
 
     static const int Eof;
 private:
-    void NextLine();
 private:
     std::istream& m_Input;
     std::istringstream m_Line;

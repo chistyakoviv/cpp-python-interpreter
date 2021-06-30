@@ -6,19 +6,23 @@
 
 namespace Tokens
 {
-    struct Interger
+    struct Integer
     {
         int value;
     };
 
     struct Eof{};
+    struct NewLine{};
     struct Plus{};
+    struct Minus{};
 }
 
 using TokenType = std::variant<
     Tokens::Eof,
+    Tokens::NewLine,
     Tokens::Plus,
-    Tokens::Interger
+    Tokens::Minus,
+    Tokens::Integer
 >;
 
 class Token

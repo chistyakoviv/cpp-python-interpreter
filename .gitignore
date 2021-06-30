@@ -3,3 +3,6 @@
 
 # build directory
 /build
+
+# executable file
+/main
