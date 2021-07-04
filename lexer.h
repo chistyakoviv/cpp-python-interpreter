@@ -46,14 +46,19 @@ class Lexer
 {
 public:
     Lexer(std::istream& input)
-     : m_Reader(input), m_CurrentChar(m_Reader.Next())
+     : m_Reader(input), m_CurrentChar(m_Reader.Next()), m_CurrentToken(GetNextTokenImpl())
     {
     }
 
-    const Token& GetCurrentToken();
+    const Token& GetCurrentToken() const;
     Token GetNextToken();
     void Advance();
+
+private:
+    Token GetNextTokenImpl();
+
 private:
     Reader m_Reader;
     char m_CurrentChar;
+    Token m_CurrentToken;
 };

@@ -11,6 +11,11 @@ namespace Tokens
         int value;
     };
 
+    struct Char
+    {
+        char value;
+    };
+
     struct Eof{};
     struct NewLine{};
     struct Plus{};
@@ -22,7 +27,8 @@ using TokenType = std::variant<
     Tokens::NewLine,
     Tokens::Plus,
     Tokens::Minus,
-    Tokens::Integer
+    Tokens::Integer,
+    Tokens::Char
 >;
 
 class Token
@@ -50,8 +56,11 @@ public:
     {
         return std::get_if<T>(&m_Type);
     }
+
+    friend bool operator==(const Token& lhs, const Token& rhs);
 private:
     TokenType m_Type;
 };
 
 std::ostream& operator<<(std::ostream& os, const Token& token);
+bool operator==(const Token& lhs, const Token& rhs);

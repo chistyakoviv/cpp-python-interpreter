@@ -21,3 +21,17 @@ std::ostream& operator<<(std::ostream& os, const Token& token)
 
     return os << '\n';
 }
+
+bool operator==(const Token& lhs, const Token& rhs)
+{
+    if (lhs.m_Type.index() != rhs.m_Type.index())
+        return false;
+
+    if (lhs.Is<Tokens::Char>())
+        return lhs.As<Tokens::Char>().value == lhs.As<Tokens::Char>().value;
+
+    if (lhs.Is<Tokens::Integer>())
+        return lhs.As<Tokens::Integer>().value == lhs.As<Tokens::Integer>().value;
+
+    return true;
+}

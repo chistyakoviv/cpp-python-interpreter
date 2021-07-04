@@ -21,7 +21,6 @@ int Reader::Get()
         return Eof;
 
     char ch = m_Line.get();
-
     if (ch == Eof)
         return '\n';
 
@@ -55,7 +54,23 @@ void Reader::NextLine()
     m_Indent = 0;
 }
 
+const Token& Lexer::GetCurrentToken() const
+{
+    return m_CurrentToken;
+}
+
 Token Lexer::GetNextToken()
+{
+    m_CurrentToken = GetNextTokenImpl();
+    return m_CurrentToken;
+}
+
+void Lexer::Advance()
+{
+    m_CurrentChar = m_Reader.Next();
+}
+
+Token Lexer::GetNextTokenImpl()
 {
     while (m_CurrentChar != Reader::Eof)
     {
@@ -97,9 +112,4 @@ Token Lexer::GetNextToken()
     }
 
     return Token{Tokens::Eof{}};
-}
-
-void Lexer::Advance()
-{
-    m_CurrentChar = m_Reader.Next();
 }
