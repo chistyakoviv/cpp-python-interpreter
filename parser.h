@@ -9,7 +9,7 @@ public:
     {
     }
 
-    int Term();
+    int Factor();
     int Expr();
 
     template<typename T>

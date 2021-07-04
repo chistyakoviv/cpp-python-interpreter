@@ -20,6 +20,8 @@ namespace Tokens
     struct NewLine{};
     struct Plus{};
     struct Minus{};
+    struct Mul{};
+    struct Div{};
 }
 
 using TokenType = std::variant<
@@ -27,6 +29,8 @@ using TokenType = std::variant<
     Tokens::NewLine,
     Tokens::Plus,
     Tokens::Minus,
+    Tokens::Mul,
+    Tokens::Div,
     Tokens::Integer,
     Tokens::Char
 >;
