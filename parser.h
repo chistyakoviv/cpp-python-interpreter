@@ -9,8 +9,9 @@ public:
     {
     }
 
-    int Factor();
     int Expr();
+    int Term();
+    int Factor();
 
     template<typename T>
     void Consume()

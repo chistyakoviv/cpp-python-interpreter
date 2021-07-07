@@ -22,6 +22,8 @@ namespace Tokens
     struct Minus{};
     struct Mul{};
     struct Div{};
+    struct Lparen{};
+    struct Rparen{};
 }
 
 using TokenType = std::variant<
@@ -32,7 +34,9 @@ using TokenType = std::variant<
     Tokens::Mul,
     Tokens::Div,
     Tokens::Integer,
-    Tokens::Char
+    Tokens::Char,
+    Tokens::Lparen,
+    Tokens::Rparen
 >;
 
 class Token

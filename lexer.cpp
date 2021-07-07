@@ -117,6 +117,16 @@ Token Lexer::GetNextTokenImpl()
             Advance();
             return Token{Tokens::Div{}};
         }
+        else if (m_CurrentChar == '(')
+        {
+            Advance();
+            return Token{Tokens::Lparen{}};
+        }
+        else if (m_CurrentChar == ')')
+        {
+            Advance();
+            return Token{Tokens::Rparen{}};
+        }
 
         throw std::runtime_error("Unxpected token");
     }

@@ -6,6 +6,7 @@ std::ostream& operator<<(std::ostream& os, const Token& token)
                                             os << #type << " {" << ptr->value << "}"
 
     PRINT_TOKEN_WITH_VALUE(Tokens::Integer);
+    PRINT_TOKEN_WITH_VALUE(Tokens::Char);
 
     #undef PRINT_TOKEN_WITH_VALUE
 
@@ -16,6 +17,10 @@ std::ostream& operator<<(std::ostream& os, const Token& token)
     PRINT_TOKEN(Tokens::NewLine);
     PRINT_TOKEN(Tokens::Plus);
     PRINT_TOKEN(Tokens::Minus);
+    PRINT_TOKEN(Tokens::Mul);
+    PRINT_TOKEN(Tokens::Div);
+    PRINT_TOKEN(Tokens::Lparen);
+    PRINT_TOKEN(Tokens::Rparen);
 
     #undef PRINT_TOKEN
 

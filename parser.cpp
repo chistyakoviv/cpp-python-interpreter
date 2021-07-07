@@ -15,20 +15,30 @@ namespace {
 
 int Parser::Expr()
 {
-    int result = Factor();
-    while (m_CurrentToken.Is<Tokens::Plus>() || m_CurrentToken.Is<Tokens::Minus>() || m_CurrentToken.Is<Tokens::Div>() || m_CurrentToken.Is<Tokens::Mul>())
+    int result = Term();
+    while (m_CurrentToken.Is<Tokens::Plus>() || m_CurrentToken.Is<Tokens::Minus>())
     {
         if (m_CurrentToken.Is<Tokens::Plus>())
         {
             Consume<Tokens::Plus>();
-            result += Factor();
+            result += Term();
         }
         else if (m_CurrentToken.Is<Tokens::Minus>())
         {
             Consume<Tokens::Minus>();
-            result -= Factor();
+            result -= Term();
         }
-        else if (m_CurrentToken.Is<Tokens::Mul>())
+    }
+
+    return result;
+}
+
+int Parser::Term()
+{
+    int result = Factor();
+    while (m_CurrentToken.Is<Tokens::Div>() || m_CurrentToken.Is<Tokens::Mul>())
+    {
+        if (m_CurrentToken.Is<Tokens::Mul>())
         {
             Consume<Tokens::Mul>();
             result *= Factor();
