@@ -55,7 +55,19 @@ int Parser::Term()
 
 int Parser::Factor()
 {
-    Token token = m_CurrentToken;
-    Consume<Tokens::Integer>();
-    return token.As<Tokens::Integer>().value;
+    int result;
+    if (m_CurrentToken.Is<Tokens::Integer>())
+    {
+        Token token = m_CurrentToken;
+        Consume<Tokens::Integer>();
+        result = token.As<Tokens::Integer>().value;
+    }
+    else if (m_CurrentToken.Is<Tokens::Lparen>())
+    {
+        Consume<Tokens::Lparen>();
+        result = Expr();
+        Consume<Tokens::Rparen>();
+    }
+
+    return result;
 }
