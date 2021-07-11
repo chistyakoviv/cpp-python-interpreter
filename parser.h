@@ -1,5 +1,7 @@
+#include <memory>
 #include "lexer.h"
 #include "token.h"
+#include "ast.h"
 
 class Parser
 {
@@ -9,9 +11,9 @@ public:
     {
     }
 
-    int Expr();
-    int Term();
-    int Factor();
+    std::unique_ptr<AST::Node> Expr();
+    std::unique_ptr<AST::Node> Term();
+    std::unique_ptr<AST::Node> Factor();
 
     template<typename T>
     void Consume()

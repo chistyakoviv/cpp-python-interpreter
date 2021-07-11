@@ -13,61 +13,61 @@ namespace {
     // }
 }
 
-int Parser::Expr()
+std::unique_ptr<AST::Node> Parser::Expr()
 {
-    int result = Term();
+    std::unique_ptr<AST::Node> node = Term();
     while (m_CurrentToken.Is<Tokens::Plus>() || m_CurrentToken.Is<Tokens::Minus>())
     {
         if (m_CurrentToken.Is<Tokens::Plus>())
         {
             Consume<Tokens::Plus>();
-            result += Term();
+            node = std::make_unique<AST::Add>(std::move(node), Term());
         }
         else if (m_CurrentToken.Is<Tokens::Minus>())
         {
             Consume<Tokens::Minus>();
-            result -= Term();
+            node = std::make_unique<AST::Sub>(std::move(node), Term());
         }
     }
 
-    return result;
+    return node;
 }
 
-int Parser::Term()
+std::unique_ptr<AST::Node> Parser::Term()
 {
-    int result = Factor();
+    std::unique_ptr<AST::Node> node = Factor();
     while (m_CurrentToken.Is<Tokens::Div>() || m_CurrentToken.Is<Tokens::Mul>())
     {
         if (m_CurrentToken.Is<Tokens::Mul>())
         {
             Consume<Tokens::Mul>();
-            result *= Factor();
+            node = std::make_unique<AST::Mul>(std::move(node), Term());
         }
         else if (m_CurrentToken.Is<Tokens::Div>())
         {
             Consume<Tokens::Div>();
-            result /= Factor();
+            node = std::make_unique<AST::Div>(std::move(node), Term());
         }
     }
 
-    return result;
+    return node;
 }
 
-int Parser::Factor()
+std::unique_ptr<AST::Node> Parser::Factor()
 {
-    int result;
+    std::unique_ptr<AST::Node> node;
     if (m_CurrentToken.Is<Tokens::Integer>())
     {
         Token token = m_CurrentToken;
         Consume<Tokens::Integer>();
-        result = token.As<Tokens::Integer>().value;
+        node = std::make_unique<AST::NumericConst>(token.As<Tokens::Integer>().value);
     }
     else if (m_CurrentToken.Is<Tokens::Lparen>())
     {
         Consume<Tokens::Lparen>();
-        result = Expr();
+        node = Expr();
         Consume<Tokens::Rparen>();
     }
 
-    return result;
+    return node;
 }

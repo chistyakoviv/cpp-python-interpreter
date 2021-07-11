@@ -1,8 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include <memory>
 #include "token.h"
 #include "lexer.h"
 #include "parser.h"
+#include "object_holder.h"
+#include "ast.h"
 
 int main()
 {
@@ -10,5 +13,16 @@ int main()
     Lexer lexer(file);
     Parser parser(lexer);
 
-    std::cout << parser.Expr() << std::endl;
+    std::unique_ptr<AST::Node> tree = parser.Expr();
+
+    if (ObjectHolder result = tree->Evaluate())
+    {
+        result->Print(std::cout);
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cout << "None";
+    }
+
 }
