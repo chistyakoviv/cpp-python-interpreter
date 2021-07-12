@@ -41,12 +41,12 @@ std::unique_ptr<AST::Node> Parser::Term()
         if (m_CurrentToken.Is<Tokens::Mul>())
         {
             Consume<Tokens::Mul>();
-            node = std::make_unique<AST::Mul>(std::move(node), Term());
+            node = std::make_unique<AST::Mul>(std::move(node), Factor());
         }
         else if (m_CurrentToken.Is<Tokens::Div>())
         {
             Consume<Tokens::Div>();
-            node = std::make_unique<AST::Div>(std::move(node), Term());
+            node = std::make_unique<AST::Div>(std::move(node), Factor());
         }
     }
 
