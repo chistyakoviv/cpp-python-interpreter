@@ -79,7 +79,7 @@ ObjectHolder Div::Evaluate()
 
 ObjectHolder Negate::Evaluate()
 {
-    ObjectHolder node = m_Node->Evaluate();
+    ObjectHolder node = m_Arg->Evaluate();
     const Runtime::Number* number = node.TryAs<Runtime::Number>();
 
     if (number)
@@ -94,7 +94,7 @@ ObjectHolder Negate::Evaluate()
 
 ObjectHolder Positive::Evaluate()
 {
-    ObjectHolder node = m_Node->Evaluate();
+    ObjectHolder node = m_Arg->Evaluate();
     const Runtime::Number* number = node.TryAs<Runtime::Number>();
 
     if (number)

@@ -76,12 +76,12 @@ public:
 class UnaryOp : public Node
 {
 public:
-    UnaryOp(std::unique_ptr<Node> node)
-        : m_Node(std::move(node))
+    UnaryOp(std::unique_ptr<Node> arg)
+        : m_Arg(std::move(arg))
     {
     }
 protected:
-    std::unique_ptr<Node> m_Node;
+    std::unique_ptr<Node> m_Arg;
 };
 
 class Negate : public UnaryOp
