@@ -77,4 +77,34 @@ ObjectHolder Div::Evaluate()
     throw std::runtime_error("Division isn't supported for these operands");
 }
 
+ObjectHolder Negate::Evaluate()
+{
+    ObjectHolder node = m_Node->Evaluate();
+    const Runtime::Number* number = node.TryAs<Runtime::Number>();
+
+    if (number)
+    {
+        return ObjectHolder::Own<Runtime::Number>(
+            Runtime::Number(-number->GetValue())
+        );
+    }
+
+    throw std::runtime_error("Operation isn't supported");
+}
+
+ObjectHolder Positive::Evaluate()
+{
+    ObjectHolder node = m_Node->Evaluate();
+    const Runtime::Number* number = node.TryAs<Runtime::Number>();
+
+    if (number)
+    {
+        return ObjectHolder::Own<Runtime::Number>(
+            Runtime::Number(number->GetValue())
+        );
+    }
+
+    throw std::runtime_error("Operation isn't supported");
+}
+
 }

@@ -33,10 +33,10 @@ private:
 
 using NumericConst = ValueNode<Runtime::Number>;
 
-class BinaryOperation : public Node
+class BinaryOp : public Node
 {
 public:
-    BinaryOperation(std::unique_ptr<Node> left, std::unique_ptr<Node> right)
+    BinaryOp(std::unique_ptr<Node> left, std::unique_ptr<Node> right)
         : m_Left(std::move(left)), m_Right(std::move(right))
     {
     }
@@ -45,31 +45,54 @@ protected:
     std::unique_ptr<Node> m_Left, m_Right;
 };
 
-class Add : public BinaryOperation
+class Add : public BinaryOp
 {
 public:
-    using BinaryOperation::BinaryOperation;
+    using BinaryOp::BinaryOp;
     ObjectHolder Evaluate() override;
 };
 
-class Sub : public BinaryOperation
+class Sub : public BinaryOp
 {
 public:
-    using BinaryOperation::BinaryOperation;
+    using BinaryOp::BinaryOp;
     ObjectHolder Evaluate() override;
 };
 
-class Mul : public BinaryOperation
+class Mul : public BinaryOp
 {
 public:
-    using BinaryOperation::BinaryOperation;
+    using BinaryOp::BinaryOp;
     ObjectHolder Evaluate() override;
 };
 
-class Div : public BinaryOperation
+class Div : public BinaryOp
 {
 public:
-    using BinaryOperation::BinaryOperation;
+    using BinaryOp::BinaryOp;
+    ObjectHolder Evaluate() override;
+};
+
+class UnaryOp : public Node
+{
+public:
+    UnaryOp(std::unique_ptr<Node> node)
+        : m_Node(std::move(node))
+    {
+    }
+protected:
+    std::unique_ptr<Node> m_Node;
+};
+
+class Negate : public UnaryOp
+{
+    using UnaryOp::UnaryOp;
+    ObjectHolder Evaluate() override;
+};
+
+class Positive : public UnaryOp
+{
+    using UnaryOp::UnaryOp;
     ObjectHolder Evaluate() override;
 };
 

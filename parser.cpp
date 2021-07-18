@@ -56,9 +56,19 @@ std::unique_ptr<AST::Node> Parser::Term()
 std::unique_ptr<AST::Node> Parser::Factor()
 {
     std::unique_ptr<AST::Node> node;
-    if (m_CurrentToken.Is<Tokens::Integer>())
+    Token token = m_CurrentToken;
+    if (m_CurrentToken.Is<Tokens::Plus>())
     {
-        Token token = m_CurrentToken;
+        Consume<Tokens::Plus>();
+        node = std::make_unique<AST::Positive>(Factor());
+    }
+    else if (m_CurrentToken.Is<Tokens::Minus>())
+    {
+        Consume<Tokens::Minus>();
+        node = std::make_unique<AST::Negate>(Factor());
+    }
+    else if (m_CurrentToken.Is<Tokens::Integer>())
+    {
         Consume<Tokens::Integer>();
         node = std::make_unique<AST::NumericConst>(token.As<Tokens::Integer>().value);
     }
