@@ -14,7 +14,6 @@ public:
     }
 
     int Next();
-    int Get();
     void NextLine();
 
     int GetLineno() const
@@ -46,19 +45,14 @@ class Lexer
 {
 public:
     Lexer(std::istream& input)
-     : m_Reader(input), m_CurrentChar(m_Reader.Next()), m_CurrentToken(GetNextTokenImpl())
+     : m_Reader(input), m_CurrentChar(m_Reader.Next())
     {
     }
 
-    const Token& GetCurrentToken() const;
-    Token GetNextToken();
     void Advance();
-
-private:
-    Token GetNextTokenImpl();
+    Token GetNextToken();
 
 private:
     Reader m_Reader;
     char m_CurrentChar;
-    Token m_CurrentToken;
 };

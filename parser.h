@@ -7,7 +7,7 @@ class Parser
 {
 public:
     Parser(Lexer& lexer)
-        : m_Lexer(lexer), m_CurrentToken(m_Lexer.GetCurrentToken())
+        : m_Lexer(lexer), m_CurrentToken(m_Lexer.GetNextToken())
     {
     }
 
@@ -18,7 +18,7 @@ public:
     template<typename T>
     void Consume()
     {
-        if (m_Lexer.GetCurrentToken().Is<T>())
+        if (m_CurrentToken.Is<T>())
             m_CurrentToken = m_Lexer.GetNextToken();
         else
             throw std::runtime_error("Unxpected Token at line");

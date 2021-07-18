@@ -15,18 +15,6 @@ int Reader::Next()
     return '\n';
 }
 
-int Reader::Get()
-{
-    if (!m_Input)
-        return Eof;
-
-    char ch = m_Line.get();
-    if (ch == Eof)
-        return '\n';
-
-    return ch;
-}
-
 void Reader::NextLine()
 {
     auto isSpace = [](char c) { return std::isspace(c); };
@@ -54,23 +42,12 @@ void Reader::NextLine()
     m_Indent = 0;
 }
 
-const Token& Lexer::GetCurrentToken() const
-{
-    return m_CurrentToken;
-}
-
-Token Lexer::GetNextToken()
-{
-    m_CurrentToken = GetNextTokenImpl();
-    return m_CurrentToken;
-}
-
 void Lexer::Advance()
 {
     m_CurrentChar = m_Reader.Next();
 }
 
-Token Lexer::GetNextTokenImpl()
+Token Lexer::GetNextToken()
 {
     while (m_CurrentChar != Reader::Eof)
     {
@@ -127,8 +104,10 @@ Token Lexer::GetNextTokenImpl()
             Advance();
             return Token{Tokens::Rparen{}};
         }
-
-        throw std::runtime_error("Unxpected token");
+        else
+        {
+            throw std::runtime_error("Unxpected token");
+        }
     }
 
     return Token{Tokens::Eof{}};
