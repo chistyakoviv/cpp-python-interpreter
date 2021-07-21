@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <unordered_map>
 #include "object.h"
 
 class ObjectHolder
@@ -49,3 +50,7 @@ private:
 
     std::shared_ptr<Object> m_Data;
 };
+
+using Closure = std::unordered_map<std::string, ObjectHolder>;
+
+std::ostream& operator<<(std::ostream& os, const Closure& closure);

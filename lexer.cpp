@@ -54,6 +54,7 @@ Token Lexer::GetNextToken()
         if (m_CurrentChar == '\n')
         {
             m_Reader.NextLine();
+            Advance();
             return Token{Tokens::NewLine{}};
         }
         else if (std::isspace(m_CurrentChar))
@@ -73,6 +74,22 @@ Token Lexer::GetNextToken()
             } while (std::isdigit(m_CurrentChar));
 
             return Token{Tokens::Integer{value}};
+        }
+        else if (std::isalpha(m_CurrentChar))
+        {
+            std::string value;
+            do
+            {
+                value += m_CurrentChar;
+                Advance();
+            } while (std::isalnum(m_CurrentChar));
+
+            return Token{Tokens::Id{value}};
+        }
+        else if (m_CurrentChar == '=')
+        {
+            Advance();
+            return Token{Tokens::Assign{}};
         }
         else if (m_CurrentChar == '+')
         {

@@ -11,9 +11,9 @@ namespace Tokens
         int value;
     };
 
-    struct Char
+    struct Id
     {
-        char value;
+        std::string value;
     };
 
     struct Eof{};
@@ -24,6 +24,7 @@ namespace Tokens
     struct Div{};
     struct Lparen{};
     struct Rparen{};
+    struct Assign{};
 }
 
 using TokenType = std::variant<
@@ -34,9 +35,10 @@ using TokenType = std::variant<
     Tokens::Mul,
     Tokens::Div,
     Tokens::Integer,
-    Tokens::Char,
     Tokens::Lparen,
-    Tokens::Rparen
+    Tokens::Rparen,
+    Tokens::Id,
+    Tokens::Assign
 >;
 
 class Token

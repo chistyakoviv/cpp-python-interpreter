@@ -13,6 +13,42 @@ namespace {
     // }
 }
 
+std::unique_ptr<AST::Node> Parser::ParseProgram()
+{
+    std::unique_ptr<AST::Compound> statements = std::make_unique<AST::Compound>();
+    while (!m_CurrentToken.Is<Tokens::Eof>())
+    {
+        statements->Add(StatementList());
+    }
+    return statements;
+}
+
+std::unique_ptr<AST::Node> Parser::StatementList()
+{
+    std::unique_ptr<AST::Node> statement = Statement();
+    Consume<Tokens::NewLine>();
+    return statement;
+}
+
+std::unique_ptr<AST::Node> Parser::Statement()
+{
+    return AssignmentStatement();
+}
+
+std::unique_ptr<AST::Node> Parser::AssignmentStatement()
+{
+    std::string var = Variable();
+    Consume<Tokens::Assign>();
+    return std::make_unique<AST::Assign>(std::move(var), Expr());
+}
+
+std::string Parser::Variable()
+{
+    Token token = m_CurrentToken;
+    Consume<Tokens::Id>();
+    return token.As<Tokens::Id>().value;
+}
+
 std::unique_ptr<AST::Node> Parser::Expr()
 {
     std::unique_ptr<AST::Node> node = Term();
@@ -77,6 +113,10 @@ std::unique_ptr<AST::Node> Parser::Factor()
         Consume<Tokens::Lparen>();
         node = Expr();
         Consume<Tokens::Rparen>();
+    }
+    else
+    {
+        node = std::make_unique<AST::VariableValue>(Variable());
     }
 
     return node;

@@ -11,18 +11,23 @@ int main()
 {
     std::ifstream file("test.py");
     Lexer lexer(file);
+
+    // while (true)
+    // {
+    //     static const auto Eof = Token{Tokens::Eof{}};
+    //     auto token = lexer.GetNextToken();
+
+    //     if (token == Eof)
+    //         break;
+
+    //     std::cout << token;
+    // }
+
     Parser parser(lexer);
 
-    std::unique_ptr<AST::Node> tree = parser.Expr();
+    Closure closure;
+    std::unique_ptr<AST::Node> tree = parser.ParseProgram();
 
-    if (ObjectHolder result = tree->Evaluate())
-    {
-        result->Print(std::cout);
-        std::cout << std::endl;
-    }
-    else
-    {
-        std::cout << "None";
-    }
-
+    ObjectHolder result = tree->Evaluate(closure);
+    std::cout << closure;
 }

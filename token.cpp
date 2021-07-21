@@ -6,7 +6,7 @@ std::ostream& operator<<(std::ostream& os, const Token& token)
                                             os << #type << " {" << ptr->value << "}"
 
     PRINT_TOKEN_WITH_VALUE(Tokens::Integer);
-    PRINT_TOKEN_WITH_VALUE(Tokens::Char);
+    PRINT_TOKEN_WITH_VALUE(Tokens::Id);
 
     #undef PRINT_TOKEN_WITH_VALUE
 
@@ -21,6 +21,7 @@ std::ostream& operator<<(std::ostream& os, const Token& token)
     PRINT_TOKEN(Tokens::Div);
     PRINT_TOKEN(Tokens::Lparen);
     PRINT_TOKEN(Tokens::Rparen);
+    PRINT_TOKEN(Tokens::Assign);
 
     #undef PRINT_TOKEN
 
@@ -32,8 +33,8 @@ bool operator==(const Token& lhs, const Token& rhs)
     if (lhs.m_Type.index() != rhs.m_Type.index())
         return false;
 
-    if (lhs.Is<Tokens::Char>())
-        return lhs.As<Tokens::Char>().value == lhs.As<Tokens::Char>().value;
+    if (lhs.Is<Tokens::Id>())
+        return lhs.As<Tokens::Id>().value == lhs.As<Tokens::Id>().value;
 
     if (lhs.Is<Tokens::Integer>())
         return lhs.As<Tokens::Integer>().value == lhs.As<Tokens::Integer>().value;

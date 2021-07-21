@@ -11,9 +11,17 @@ public:
     {
     }
 
+    std::unique_ptr<AST::Node> ParseProgram();
+
+private:
+
     std::unique_ptr<AST::Node> Expr();
     std::unique_ptr<AST::Node> Term();
     std::unique_ptr<AST::Node> Factor();
+    std::unique_ptr<AST::Node> Statement();
+    std::unique_ptr<AST::Node> StatementList();
+    std::unique_ptr<AST::Node> AssignmentStatement();
+    std::string Variable();
 
     template<typename T>
     void Consume()
