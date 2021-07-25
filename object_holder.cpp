@@ -1,4 +1,7 @@
 #include "object_holder.h"
+#include "object.h"
+
+namespace Runtime {
 
 std::ostream& operator<<(std::ostream& os, const Closure& closure)
 {
@@ -55,4 +58,6 @@ const Object* ObjectHolder::Get() const
 ObjectHolder::operator bool() const
 {
     return Get();
+}
+
 }

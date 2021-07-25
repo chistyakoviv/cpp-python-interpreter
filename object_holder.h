@@ -2,7 +2,10 @@
 
 #include <memory>
 #include <unordered_map>
-#include "object.h"
+
+namespace Runtime {
+
+class Object;
 
 class ObjectHolder
 {
@@ -54,3 +57,7 @@ private:
 using Closure = std::unordered_map<std::string, ObjectHolder>;
 
 std::ostream& operator<<(std::ostream& os, const Closure& closure);
+
+}
+
+using ObjectHolder = Runtime::ObjectHolder;

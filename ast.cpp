@@ -2,7 +2,7 @@
 
 namespace AST {
 
-ObjectHolder Add::Evaluate(Closure& closure)
+ObjectHolder Add::Evaluate(Runtime::Closure& closure)
 {
     ObjectHolder left = m_Left->Evaluate(closure);
     ObjectHolder right = m_Right->Evaluate(closure);
@@ -20,7 +20,7 @@ ObjectHolder Add::Evaluate(Closure& closure)
     throw std::runtime_error("Addition isn't supported for these operands");
 }
 
-ObjectHolder Sub::Evaluate(Closure& closure)
+ObjectHolder Sub::Evaluate(Runtime::Closure& closure)
 {
     ObjectHolder left = m_Left->Evaluate(closure);
     ObjectHolder right = m_Right->Evaluate(closure);
@@ -38,7 +38,7 @@ ObjectHolder Sub::Evaluate(Closure& closure)
     throw std::runtime_error("Substraction isn't supported for these operands");
 }
 
-ObjectHolder Mul::Evaluate(Closure& closure)
+ObjectHolder Mul::Evaluate(Runtime::Closure& closure)
 {
     ObjectHolder left = m_Left->Evaluate(closure);
     ObjectHolder right = m_Right->Evaluate(closure);
@@ -56,7 +56,7 @@ ObjectHolder Mul::Evaluate(Closure& closure)
     throw std::runtime_error("Multiplication isn't supported for these operands");
 }
 
-ObjectHolder Div::Evaluate(Closure& closure)
+ObjectHolder Div::Evaluate(Runtime::Closure& closure)
 {
     ObjectHolder left = m_Left->Evaluate(closure);
     ObjectHolder right = m_Right->Evaluate(closure);
@@ -77,7 +77,7 @@ ObjectHolder Div::Evaluate(Closure& closure)
     throw std::runtime_error("Division isn't supported for these operands");
 }
 
-ObjectHolder Negate::Evaluate(Closure& closure)
+ObjectHolder Negate::Evaluate(Runtime::Closure& closure)
 {
     ObjectHolder node = m_Arg->Evaluate(closure);
     const Runtime::Number* number = node.TryAs<Runtime::Number>();
@@ -92,7 +92,7 @@ ObjectHolder Negate::Evaluate(Closure& closure)
     throw std::runtime_error("Operation isn't supported");
 }
 
-ObjectHolder Positive::Evaluate(Closure& closure)
+ObjectHolder Positive::Evaluate(Runtime::Closure& closure)
 {
     ObjectHolder node = m_Arg->Evaluate(closure);
     const Runtime::Number* number = node.TryAs<Runtime::Number>();
@@ -107,7 +107,7 @@ ObjectHolder Positive::Evaluate(Closure& closure)
     throw std::runtime_error("Operation isn't supported");
 }
 
-ObjectHolder Compound::Evaluate(Closure& closure)
+ObjectHolder Compound::Evaluate(Runtime::Closure& closure)
 {
     for (auto& node : m_Nodes)
     {
@@ -116,9 +116,22 @@ ObjectHolder Compound::Evaluate(Closure& closure)
     return ObjectHolder::None();
 }
 
-ObjectHolder Assign::Evaluate(Closure& closure)
+ObjectHolder Assign::Evaluate(Runtime::Closure& closure)
 {
     return closure[m_VarName] = m_Expr->Evaluate(closure);
+}
+
+ObjectHolder FieldAssign::Evaluate(Runtime::Closure& closure)
+{
+    ObjectHolder instance = m_Object.Evaluate(closure);
+    if (auto p = instance.TryAs<Runtime::ClassInstance>())
+    {
+        return p->GetFields()[m_FieldName] = m_Expr->Evaluate(closure);
+    }
+    else
+    {
+        throw std::runtime_error("Cannot assign a value to the field " + m_FieldName + " of not an object");
+    }
 }
 
 }

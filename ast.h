@@ -12,7 +12,7 @@ class Node
 {
 public:
     virtual ~Node() = default;
-    virtual ObjectHolder Evaluate(Closure& closure) = 0;
+    virtual ObjectHolder Evaluate(Runtime::Closure& closure) = 0;
 };
 
 template<typename T>
@@ -24,7 +24,7 @@ public:
     {
     }
 
-    ObjectHolder Evaluate(Closure& closure) override {
+    ObjectHolder Evaluate(Runtime::Closure& closure) override {
         return ObjectHolder::Share(m_Value);
     }
 
@@ -33,6 +33,8 @@ private:
 };
 
 using NumericConst = ValueNode<Runtime::Number>;
+using StringConst = ValueNode<Runtime::String>;
+using BoolConst = ValueNode<Runtime::Bool>;
 
 class VariableValue : public Node
 {
@@ -42,7 +44,7 @@ public:
     {
     }
 
-    ObjectHolder Evaluate(Closure& closure) override
+    ObjectHolder Evaluate(Runtime::Closure& closure) override
     {
         return closure[m_VarName];
     }
@@ -66,28 +68,28 @@ class Add : public BinaryOp
 {
 public:
     using BinaryOp::BinaryOp;
-    ObjectHolder Evaluate(Closure& closure) override;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
 
 class Sub : public BinaryOp
 {
 public:
     using BinaryOp::BinaryOp;
-    ObjectHolder Evaluate(Closure& closure) override;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
 
 class Mul : public BinaryOp
 {
 public:
     using BinaryOp::BinaryOp;
-    ObjectHolder Evaluate(Closure& closure) override;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
 
 class Div : public BinaryOp
 {
 public:
     using BinaryOp::BinaryOp;
-    ObjectHolder Evaluate(Closure& closure) override;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
 
 class UnaryOp : public Node
@@ -104,13 +106,13 @@ protected:
 class Negate : public UnaryOp
 {
     using UnaryOp::UnaryOp;
-    ObjectHolder Evaluate(Closure& closure) override;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
 
 class Positive : public UnaryOp
 {
     using UnaryOp::UnaryOp;
-    ObjectHolder Evaluate(Closure& closure) override;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
 
 class Compound : public Node
@@ -127,7 +129,7 @@ public:
         m_Nodes.push_back(std::move(node));
     }
 
-    ObjectHolder Evaluate(Closure& closure) override;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 private:
     std::vector<std::unique_ptr<Node>> m_Nodes;
 };
@@ -140,10 +142,25 @@ public:
     {
     }
 
-    ObjectHolder Evaluate(Closure& closure) override;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 private:
     std::string m_VarName;
     std::unique_ptr<AST::Node> m_Expr;
+};
+
+class FieldAssign : public Node
+{
+public:
+    FieldAssign(VariableValue object, std::string fieldName, std::unique_ptr<Node> expr)
+        : m_Object(std::move(object)), m_FieldName(std::move(fieldName)), m_Expr(std::move(expr))
+    {
+    }
+
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+private:
+    VariableValue m_Object;
+    std::string m_FieldName;
+    std::unique_ptr<Node> m_Expr;
 };
 
 }

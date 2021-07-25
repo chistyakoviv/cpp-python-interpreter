@@ -25,7 +25,7 @@ int main()
 
     Parser parser(lexer);
 
-    Closure closure;
+    Runtime::Closure closure;
     std::unique_ptr<AST::Node> tree = parser.ParseProgram();
 
     ObjectHolder result = tree->Evaluate(closure);
