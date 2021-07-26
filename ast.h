@@ -40,16 +40,18 @@ class VariableValue : public Node
 {
 public:
     VariableValue(std::string varName)
-        : m_VarName(std::move(varName))
+    {
+        m_DottedIds.push_back(std::move(varName));
+    }
+
+    VariableValue(std::vector<std::string> dottedIds)
+        : m_DottedIds(std::move(dottedIds))
     {
     }
 
-    ObjectHolder Evaluate(Runtime::Closure& closure) override
-    {
-        return closure[m_VarName];
-    }
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
 private:
-    std::string m_VarName;
+    std::vector<std::string> m_DottedIds;
 };
 
 class BinaryOp : public Node
@@ -161,6 +163,37 @@ private:
     VariableValue m_Object;
     std::string m_FieldName;
     std::unique_ptr<Node> m_Expr;
+};
+
+struct None : Node
+{
+    ObjectHolder Evaluate(Runtime::Closure& closure) override
+    {
+        return ObjectHolder::None();
+    }
+};
+
+class Print : public Node
+{
+public:
+    Print(std::unique_ptr<Node> arg)
+    {
+        m_Args.push_back(std::move(arg));
+    }
+
+    Print(std::vector<std::unique_ptr<Node>> args)
+        : m_Args(std::move(args))
+    {
+    }
+
+    static std::unique_ptr<Print> Variable(std::string name);
+
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+
+    static void SetOutputStream(std::ostream& os);
+private:
+    std::vector<std::unique_ptr<Node>> m_Args;
+    static std::ostream* s_Output;
 };
 
 }
