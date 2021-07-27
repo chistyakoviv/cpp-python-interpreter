@@ -94,6 +94,18 @@ public:
     ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
 
+class And : public BinaryOp
+{
+    using BinaryOp::BinaryOp;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+};
+
+class Or : public BinaryOp
+{
+    using BinaryOp::BinaryOp;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+};
+
 class UnaryOp : public Node
 {
 public:
@@ -112,6 +124,12 @@ class Negate : public UnaryOp
 };
 
 class Positive : public UnaryOp
+{
+    using UnaryOp::UnaryOp;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+};
+
+class Not : public UnaryOp
 {
     using UnaryOp::UnaryOp;
     ObjectHolder Evaluate(Runtime::Closure& closure) override;
@@ -194,6 +212,74 @@ public:
 private:
     std::vector<std::unique_ptr<Node>> m_Args;
     static std::ostream* s_Output;
+};
+
+class MethodCall : public Node
+{
+public:
+    MethodCall(std::unique_ptr<Node> object, std::string method, std::vector<std::unique_ptr<Node>> args)
+        : m_Object(std::move(object)), m_Method(std::move(method)), m_Args(std::move(args))
+    {
+    }
+
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+private:
+    std::unique_ptr<Node> m_Object;
+    std::string m_Method;
+    std::vector<std::unique_ptr<Node>> m_Args;
+};
+
+class NewInstance : public Node
+{
+public:
+    NewInstance(const Runtime::Class& cls)
+        : NewInstance(cls, {})
+    {
+    }
+
+    NewInstance(const Runtime::Class& cls, std::vector<std::unique_ptr<Node>> args)
+        : m_Class(cls), m_Args(std::move(args))
+    {
+    }
+
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+private:
+    const Runtime::Class& m_Class;
+    std::vector<std::unique_ptr<Node>> m_Args;
+};
+
+class Stringify : public UnaryOp
+{
+public:
+    using UnaryOp::UnaryOp;
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+};
+
+class Return : public Node
+{
+public:
+    Return(std::unique_ptr<Node> node)
+        : m_Node(std::move(node))
+    {
+    }
+
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+private:
+    std::unique_ptr<Node> m_Node;
+};
+
+class ClassDefinition : public Node
+{
+public:
+    ClassDefinition(ObjectHolder cls)
+        : m_Class(std::move(cls)), m_ClassName(dynamic_cast<const Runtime::Class&>(*cls).GetName())
+    {
+    }
+
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+private:
+    ObjectHolder m_Class;
+    std::string m_ClassName;
 };
 
 }

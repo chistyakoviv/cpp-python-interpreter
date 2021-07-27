@@ -1,5 +1,6 @@
 #include "ast.h"
 #include <iostream>
+#include <sstream>
 
 namespace AST {
 
@@ -78,6 +79,18 @@ ObjectHolder Div::Evaluate(Runtime::Closure& closure)
     throw std::runtime_error("Division isn't supported for these operands");
 }
 
+ObjectHolder Or::Evaluate(Runtime::Closure& closure)
+{
+    if (Runtime::IsTrue(m_Left->Evaluate(closure)) || Runtime::IsTrue(m_Right->Evaluate(closure)))
+    {
+        return ObjectHolder::Own(Runtime::Bool(true));
+    }
+    else
+    {
+        return ObjectHolder::Own(Runtime::Bool(false));
+    }
+}
+
 ObjectHolder Negate::Evaluate(Runtime::Closure& closure)
 {
     ObjectHolder node = m_Arg->Evaluate(closure);
@@ -106,6 +119,11 @@ ObjectHolder Positive::Evaluate(Runtime::Closure& closure)
     }
 
     throw std::runtime_error("Operation isn't supported");
+}
+
+ObjectHolder Not::Evaluate(Runtime::Closure& closure)
+{
+    return ObjectHolder::Own(Runtime::Bool(!Runtime::IsTrue(m_Arg->Evaluate(closure))));
 }
 
 ObjectHolder Compound::Evaluate(Runtime::Closure& closure)
@@ -199,6 +217,64 @@ ObjectHolder Print::Evaluate(Runtime::Closure& closure)
 void Print::SetOutputStream(std::ostream& os)
 {
     s_Output = &os;
+}
+
+ObjectHolder MethodCall::Evaluate(Runtime::Closure& closure)
+{
+    std::vector<ObjectHolder> actualParams;
+    for (const auto& arg : m_Args)
+    {
+        actualParams.push_back(arg->Evaluate(closure));
+    }
+
+    ObjectHolder calee = m_Object->Evaluate(closure);
+    if (Runtime::ClassInstance* instance = calee.TryAs<Runtime::ClassInstance>())
+    {
+        return instance->Call(m_Method, actualParams);
+    }
+    else
+    {
+        throw std::runtime_error("Trying to call method " + m_Method + " on an object that is not a class instance");
+    }
+}
+
+ObjectHolder NewInstance::Evaluate(Runtime::Closure& closure)
+{
+    Runtime::ClassInstance instance(m_Class);
+
+    if (const Runtime::Method* m = m_Class.GetMethod("__init__"); m)
+    {
+        std::vector<ObjectHolder> actualParams;
+        for (const auto& arg : m_Args)
+        {
+            actualParams.push_back(arg->Evaluate(closure));
+        }
+
+        instance.Call("__init__", actualParams);
+    }
+
+    return ObjectHolder::Own(std::move(instance));
+}
+
+ObjectHolder Stringify::Evaluate(Runtime::Closure& closure)
+{
+    ObjectHolder value = m_Arg->Evaluate(closure);
+
+    std::ostringstream os;
+    value->Print(os);
+
+    return ObjectHolder::Own(Runtime::String(os.str()));
+}
+
+ObjectHolder Return::Evaluate(Runtime::Closure& closure)
+{
+    return m_Node->Evaluate(closure);
+}
+
+ObjectHolder ClassDefinition::Evaluate(Runtime::Closure& closure)
+{
+    closure[m_ClassName] = m_Class;
+    return ObjectHolder::None();
 }
 
 }

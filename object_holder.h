@@ -56,6 +56,8 @@ private:
 
 using Closure = std::unordered_map<std::string, ObjectHolder>;
 
+bool IsTrue(ObjectHolder object);
+
 std::ostream& operator<<(std::ostream& os, const Closure& closure);
 
 }

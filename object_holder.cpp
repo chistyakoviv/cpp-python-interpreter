@@ -60,4 +60,21 @@ ObjectHolder::operator bool() const
     return Get();
 }
 
+bool IsTrue(ObjectHolder object)
+{
+    if (!object)
+        return false;
+
+    if (auto p = object.TryAs<Number>(); p && p->GetValue() != 0)
+        return true;
+
+    if (auto p = object.TryAs<String>(); p && !p->GetValue().empty())
+        return true;
+
+    if (auto p = object.TryAs<Bool>(); p && p->GetValue())
+        return true;
+
+    return false;
+}
+
 }
