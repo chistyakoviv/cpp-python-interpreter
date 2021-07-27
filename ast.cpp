@@ -277,4 +277,25 @@ ObjectHolder ClassDefinition::Evaluate(Runtime::Closure& closure)
     return ObjectHolder::None();
 }
 
+ObjectHolder IfElse::Evaluate(Runtime::Closure& closure)
+{
+    ObjectHolder value = m_Condition->Evaluate(closure);
+    if (Runtime::IsTrue(value))
+    {
+        m_IfBody->Evaluate(closure);
+    }
+    else if (m_ElseBody)
+    {
+        m_ElseBody->Evaluate(closure);
+    }
+    return ObjectHolder::None();
+}
+
+ObjectHolder Comparison::Evaluate(Runtime::Closure& closure)
+{
+    return ObjectHolder::Own(
+        Runtime::Bool(m_Comparator(m_Left->Evaluate(closure), m_Right->Evaluate(closure)))
+    );
+}
+
 }

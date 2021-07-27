@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 #include "token.h"
 #include "object.h"
 #include "object_holder.h"
@@ -280,6 +281,46 @@ public:
 private:
     ObjectHolder m_Class;
     std::string m_ClassName;
+};
+
+class IfElse : public Node
+{
+public:
+    IfElse(
+        std::unique_ptr<Node> condition,
+        std::unique_ptr<Node> ifBody,
+        std::unique_ptr<Node> elseBody
+    )
+        : m_Condition(std::move(condition)), m_IfBody(std::move(ifBody)), m_ElseBody(std::move(elseBody))
+    {
+    }
+
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+private:
+    std::unique_ptr<Node> m_Condition;
+    std::unique_ptr<Node> m_IfBody;
+    std::unique_ptr<Node> m_ElseBody;
+};
+
+class Comparison : public Node
+{
+public:
+    using Comparator = std::function<bool(const ObjectHolder&, const ObjectHolder&)>;
+
+    Comparison(
+        Comparator cmp,
+        std::unique_ptr<Node> lhs,
+        std::unique_ptr<Node> rhs
+    )
+        : m_Comparator(std::move(cmp)), m_Left(std::move(lhs)), m_Right(std::move(rhs))
+    {
+    }
+
+    ObjectHolder Evaluate(Runtime::Closure& closure) override;
+private:
+    Comparator m_Comparator;
+    std::unique_ptr<Node> m_Left;
+    std::unique_ptr<Node> m_Right;
 };
 
 }
