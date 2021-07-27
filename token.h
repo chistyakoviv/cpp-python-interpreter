@@ -16,6 +16,11 @@ namespace Tokens
         std::string value;
     };
 
+    struct String
+    {
+        std::string value;
+    };
+
     struct Eof{};
     struct NewLine{};
     struct Plus{};
@@ -25,6 +30,25 @@ namespace Tokens
     struct Lparen{};
     struct Rparen{};
     struct Assign{};
+    struct Indent{};
+    struct Dedent{};
+    struct Class{};
+    struct Def{};
+    struct Return{};
+    struct If{};
+    struct Else{};
+    struct And{};
+    struct Or{};
+    struct Not{};
+    struct Eq{};
+    struct NotEq{};
+    struct LessOrEq{};
+    struct GreaterOrEq{};
+    struct Less{};
+    struct Greater{};
+    struct None{};
+    struct True{};
+    struct False{};
 }
 
 using TokenType = std::variant<
@@ -38,7 +62,27 @@ using TokenType = std::variant<
     Tokens::Lparen,
     Tokens::Rparen,
     Tokens::Id,
-    Tokens::Assign
+    Tokens::Assign,
+    Tokens::String,
+    Tokens::Indent,
+    Tokens::Dedent,
+    Tokens::Class,
+    Tokens::Def,
+    Tokens::Return,
+    Tokens::If,
+    Tokens::Else,
+    Tokens::And,
+    Tokens::Or,
+    Tokens::Not,
+    Tokens::Eq,
+    Tokens::NotEq,
+    Tokens::LessOrEq,
+    Tokens::GreaterOrEq,
+    Tokens::Less,
+    Tokens::Greater,
+    Tokens::None,
+    Tokens::True,
+    Tokens::False
 >;
 
 class Token
