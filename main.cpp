@@ -12,22 +12,22 @@ int main()
     std::ifstream file("test.py");
     Lexer lexer(file);
 
-    // while (true)
-    // {
-    //     static const auto Eof = Token{Tokens::Eof{}};
-    //     auto token = lexer.GetNextToken();
+    while (true)
+    {
+        static const Token Eof = Token{Tokens::Eof{}};
+        Token token = lexer.GetNextToken();
 
-    //     if (token == Eof)
-    //         break;
+        if (token == Eof)
+            break;
 
-    //     std::cout << token;
-    // }
+        std::cout << token;
+    }
 
-    Parser parser(lexer);
+    // Parser parser(lexer);
 
-    Runtime::Closure closure;
-    std::unique_ptr<AST::Node> tree = parser.ParseProgram();
+    // Runtime::Closure closure;
+    // std::unique_ptr<AST::Node> tree = parser.ParseProgram();
 
-    ObjectHolder result = tree->Evaluate(closure);
-    std::cout << closure;
+    // ObjectHolder result = tree->Evaluate(closure);
+    // std::cout << closure;
 }

@@ -1,4 +1,7 @@
 #include <algorithm>
+#include <unordered_map>
+#include <string>
+#include <iomanip>
 #include "lexer.h"
 
 const int Reader::Eof = std::istream::traits_type::eof();
@@ -8,8 +11,10 @@ int Reader::Next()
     if (!m_Input)
         return Eof;
 
+    m_Column++;
+
     char ch;
-    if (m_Line >> ch)
+    if (m_Line >> std::noskipws >> ch)
         return ch;
 
     return '\n';
@@ -49,9 +54,34 @@ void Lexer::Advance()
 
 Token Lexer::GetNextToken()
 {
+    static const std::unordered_map<std::string, Token> keywords = {
+        {"class", Token{Tokens::Class{}}},
+        {"def", Token{Tokens::Def{}}},
+        {"return", Token{Tokens::Return{}}},
+        {"print", Token{Tokens::Print{}}},
+        {"if", Token{Tokens::If{}}},
+        {"else", Token{Tokens::Else{}}},
+        {"and", Token{Tokens::And{}}},
+        {"or", Token{Tokens::Or{}}},
+        {"not", Token{Tokens::Not{}}},
+        {"True", Token{Tokens::True{}}},
+        {"False", Token{Tokens::False{}}},
+        {"None", Token{Tokens::None{}}},
+    };
+
     while (m_CurrentChar != Reader::Eof)
     {
-        if (m_CurrentChar == '\n')
+        if (m_CurrentIndent < m_Reader.GetIndent())
+        {
+            m_CurrentIndent++;
+            return Token{Tokens::Indent{}};
+        }
+        else if (m_CurrentIndent > m_Reader.GetIndent())
+        {
+            m_CurrentIndent--;
+            return Token{Tokens::Dedent{}};
+        }
+        else if (m_CurrentChar == '\n')
         {
             m_Reader.NextLine();
             Advance();
@@ -84,7 +114,14 @@ Token Lexer::GetNextToken()
                 Advance();
             } while (std::isalnum(m_CurrentChar));
 
-            return Token{Tokens::Id{value}};
+            if (auto it = keywords.find(value); it != keywords.end())
+            {
+                return it->second;
+            }
+            else
+            {
+                return Token{Tokens::Id{value}};
+            }
         }
         else if (m_CurrentChar == '=')
         {
@@ -120,6 +157,11 @@ Token Lexer::GetNextToken()
         {
             Advance();
             return Token{Tokens::Rparen{}};
+        }
+        else if (m_CurrentChar == ':')
+        {
+            Advance();
+            return Token{Tokens::Colon{}};
         }
         else
         {

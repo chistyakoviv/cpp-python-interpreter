@@ -46,7 +46,7 @@ ObjectHolder ClassInstance::Call(const std::string& method, const std::vector<Ob
     {
         try
         {
-            Closure closure;
+            Closure closure = {{"self", ObjectHolder::Share(*this)}};
             for (size_t i = 0; i < actualParams.size(); i++)
             {
                 closure[m->formalParams[i]] = actualParams[i];

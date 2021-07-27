@@ -23,9 +23,9 @@ std::ostream& operator<<(std::ostream& os, const Token& token)
     PRINT_TOKEN(Tokens::Lparen);
     PRINT_TOKEN(Tokens::Rparen);
     PRINT_TOKEN(Tokens::Assign);
-    PRINT_TOKEN(Tokens::Assign);
     PRINT_TOKEN(Tokens::Indent);
     PRINT_TOKEN(Tokens::Dedent);
+    PRINT_TOKEN(Tokens::Print);
     PRINT_TOKEN(Tokens::Class);
     PRINT_TOKEN(Tokens::Def);
     PRINT_TOKEN(Tokens::Return);
@@ -43,6 +43,7 @@ std::ostream& operator<<(std::ostream& os, const Token& token)
     PRINT_TOKEN(Tokens::None);
     PRINT_TOKEN(Tokens::True);
     PRINT_TOKEN(Tokens::False);
+    PRINT_TOKEN(Tokens::Colon);
 
     #undef PRINT_TOKEN
 

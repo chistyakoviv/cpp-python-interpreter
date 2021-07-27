@@ -45,7 +45,7 @@ class Lexer
 {
 public:
     Lexer(std::istream& input)
-     : m_Reader(input), m_CurrentChar(m_Reader.Next())
+     : m_Reader(input), m_CurrentChar(m_Reader.Next()), m_CurrentIndent(0)
     {
     }
 
@@ -55,4 +55,5 @@ public:
 private:
     Reader m_Reader;
     char m_CurrentChar;
+    int m_CurrentIndent;
 };

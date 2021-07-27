@@ -32,6 +32,7 @@ namespace Tokens
     struct Assign{};
     struct Indent{};
     struct Dedent{};
+    struct Print{};
     struct Class{};
     struct Def{};
     struct Return{};
@@ -49,6 +50,7 @@ namespace Tokens
     struct None{};
     struct True{};
     struct False{};
+    struct Colon{};
 }
 
 using TokenType = std::variant<
@@ -66,6 +68,7 @@ using TokenType = std::variant<
     Tokens::String,
     Tokens::Indent,
     Tokens::Dedent,
+    Tokens::Print,
     Tokens::Class,
     Tokens::Def,
     Tokens::Return,
@@ -82,7 +85,8 @@ using TokenType = std::variant<
     Tokens::Greater,
     Tokens::None,
     Tokens::True,
-    Tokens::False
+    Tokens::False,
+    Tokens::Colon
 >;
 
 class Token
