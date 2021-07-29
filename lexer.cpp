@@ -103,7 +103,7 @@ Token Lexer::GetNextToken()
                 Advance();
             } while (std::isdigit(m_CurrentChar));
 
-            return Token{Tokens::Integer{value}};
+            return Token{Tokens::Integer{std::move(value)}};
         }
         else if (std::isalpha(m_CurrentChar))
         {
@@ -120,13 +120,72 @@ Token Lexer::GetNextToken()
             }
             else
             {
-                return Token{Tokens::Id{value}};
+                return Token{Tokens::Id{std::move(value)}};
             }
+        }
+        else if (m_CurrentChar == '"' || m_CurrentChar == '\'')
+        {
+            char opener = m_CurrentChar;
+            bool isEscaped = false;
+            std::string value;
+
+            Advance();
+            while ((m_CurrentChar != opener || isEscaped) && m_CurrentChar != '\n')
+            {
+                isEscaped = (m_CurrentChar == '\\');
+
+                if (isEscaped)
+                    Advance();
+
+                value += m_CurrentChar;
+                Advance();
+            }
+
+            if (m_CurrentChar != opener)
+                throw std::runtime_error("String " + value + " has unbalanced quotes");
+
+            Advance();
+            return Token{Tokens::String{std::move(value)}};
         }
         else if (m_CurrentChar == '=')
         {
             Advance();
+            if (m_CurrentChar == '=')
+            {
+                Advance();
+                return Token{Tokens::Eq{}};
+            }
             return Token{Tokens::Assign{}};
+        }
+        else if (m_CurrentChar == '!')
+        {
+            Advance();
+            if (m_CurrentChar == '=')
+            {
+                Advance();
+                return Token{Tokens::NotEq{}};
+            }
+            return Token{Tokens::Not{}};
+        }
+        else if (m_CurrentChar == '<')
+        {
+            Advance();
+            if (m_CurrentChar == '=')
+            {
+                Advance();
+                return Token{Tokens::LessOrEq{}};
+            }
+            return Token{Tokens::Less{}};
+        }
+        else if (m_CurrentChar == '>')
+        {
+            Advance();
+            if (m_CurrentChar == '=')
+            {
+                Advance();
+                return Token{Tokens::GreaterOrEq{}};
+            }
+            return Token{Tokens::Greater{}};
         }
         else if (m_CurrentChar == '+')
         {
@@ -162,6 +221,11 @@ Token Lexer::GetNextToken()
         {
             Advance();
             return Token{Tokens::Colon{}};
+        }
+        else if (m_CurrentChar == ',')
+        {
+            Advance();
+            return Token{Tokens::Comma{}};
         }
         else
         {

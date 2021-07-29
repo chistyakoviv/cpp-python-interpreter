@@ -1,4 +1,4 @@
-class Mess:
+class Message:
     def Say():
-        a = 10
-a = 5
+        a = 10 == 10
+print('hello i\\\'m')
