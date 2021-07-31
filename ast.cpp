@@ -142,7 +142,7 @@ ObjectHolder Assign::Evaluate(Runtime::Closure& closure)
 
 ObjectHolder FieldAssign::Evaluate(Runtime::Closure& closure)
 {
-    ObjectHolder instance = m_Object.Evaluate(closure);
+    ObjectHolder instance = m_Object->Evaluate(closure);
     if (auto p = instance.TryAs<Runtime::ClassInstance>())
     {
         return p->GetFields()[m_FieldName] = m_Expr->Evaluate(closure);

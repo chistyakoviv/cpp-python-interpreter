@@ -172,14 +172,14 @@ private:
 class FieldAssign : public Node
 {
 public:
-    FieldAssign(VariableValue object, std::string fieldName, std::unique_ptr<Node> expr)
+    FieldAssign(std::unique_ptr<VariableValue> object, std::string fieldName, std::unique_ptr<Node> expr)
         : m_Object(std::move(object)), m_FieldName(std::move(fieldName)), m_Expr(std::move(expr))
     {
     }
 
     ObjectHolder Evaluate(Runtime::Closure& closure) override;
 private:
-    VariableValue m_Object;
+    std::unique_ptr<VariableValue> m_Object;
     std::string m_FieldName;
     std::unique_ptr<Node> m_Expr;
 };

@@ -1,17 +1,27 @@
-program: EOF | (statement_list)*
+program: EOF | statement*
 
-compound_statement: NEWLINE INDEND statement_list DENDENT
+compound_statement: NEWLINE INDENT statement DEDENT
 
-statement_list: (statement NEWLINE)*
+statement: class | if | simple_statement NEWLINE
 
-statement: assignment_statement
+simple_statement: return | print | assignment_statement_or_call
 
-assignment_statement: variable ASSIGN expr
+return :
 
-variable: ID
+assignment_statement_or_call: dotted_id ASSIGN expr | ID LPAREN RPAREN
+
+dotted_id: ID
+
+bool_expr : test_and (OR test_and)*
+
+test_and : test_not (AND test_not)*
+
+test_not : test_not | comparison
+
+comparison : expr ((EQ | GREATER_OR_EQ | LESS_OR_EQ | LESS | GREATER) expr)
 
 expr : term ((PLUS | MINUS) term)*
 
 term : factor ((MUL | DIV) factor)*
 
-factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN | variable
+factor : (PLUS | MINUS) factor | INTEGER | LPAREN bool_expr RPAREN | dotted_id | dotted_id LPAREN expr_list RPAREN | TRUE | FALSE | NONE | STRING

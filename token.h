@@ -52,6 +52,7 @@ namespace Tokens
     struct False{};
     struct Colon{};
     struct Comma{};
+    struct Dot{};
 }
 
 using TokenType = std::variant<
@@ -88,7 +89,8 @@ using TokenType = std::variant<
     Tokens::True,
     Tokens::False,
     Tokens::Colon,
-    Tokens::Comma
+    Tokens::Comma,
+    Tokens::Dot
 >;
 
 class Token

@@ -45,6 +45,7 @@ std::ostream& operator<<(std::ostream& os, const Token& token)
     PRINT_TOKEN(Tokens::False);
     PRINT_TOKEN(Tokens::Colon);
     PRINT_TOKEN(Tokens::Comma);
+    PRINT_TOKEN(Tokens::Dot);
 
     #undef PRINT_TOKEN
 

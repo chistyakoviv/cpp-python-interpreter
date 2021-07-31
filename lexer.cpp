@@ -227,6 +227,11 @@ Token Lexer::GetNextToken()
             Advance();
             return Token{Tokens::Comma{}};
         }
+        else if (m_CurrentChar == '.')
+        {
+            Advance();
+            return Token{Tokens::Dot{}};
+        }
         else
         {
             throw std::runtime_error("Unxpected token");

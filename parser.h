@@ -1,4 +1,5 @@
 #include <memory>
+#include <vector>
 #include "lexer.h"
 #include "token.h"
 #include "ast.h"
@@ -15,13 +16,14 @@ public:
 
 private:
 
-    std::unique_ptr<AST::Node> Expr();
-    std::unique_ptr<AST::Node> Term();
-    std::unique_ptr<AST::Node> Factor();
-    std::unique_ptr<AST::Node> Statement();
-    std::unique_ptr<AST::Node> StatementList();
-    std::unique_ptr<AST::Node> AssignmentStatement();
-    std::string Variable();
+    std::unique_ptr<AST::Node> ParseBoolExpr();
+    std::unique_ptr<AST::Node> ParseExpr();
+    std::unique_ptr<AST::Node> ParseTerm();
+    std::unique_ptr<AST::Node> ParseFactor();
+    std::unique_ptr<AST::Node> ParseStatement();
+    std::unique_ptr<AST::Node> ParseSimpleStatement();
+    std::unique_ptr<AST::Node> ParseAssignmentStatementOrCall();
+    std::vector<std::string> ParseDottedIds();
 
     template<typename T>
     void Consume()
