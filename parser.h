@@ -23,6 +23,11 @@ private:
     std::unique_ptr<AST::Node> ParseStatement();
     std::unique_ptr<AST::Node> ParseSimpleStatement();
     std::unique_ptr<AST::Node> ParseAssignmentStatementOrCall();
+    std::vector<std::unique_ptr<AST::Node>> ParseLogicalExprList();
+    std::unique_ptr<AST::Node> ParseLogicalExpr();
+    std::unique_ptr<AST::Node> ParseAndTest();
+    std::unique_ptr<AST::Node> ParseNotTest();
+    std::unique_ptr<AST::Node> ParseComparison();
     std::vector<std::string> ParseDottedIds();
 
     template<typename T>

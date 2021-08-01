@@ -91,6 +91,18 @@ ObjectHolder Or::Evaluate(Runtime::Closure& closure)
     }
 }
 
+ObjectHolder And::Evaluate(Runtime::Closure& closure)
+{
+    if (Runtime::IsTrue(m_Left->Evaluate(closure)) && Runtime::IsTrue(m_Right->Evaluate(closure)))
+    {
+        return ObjectHolder::Own(Runtime::Bool(true));
+    }
+    else
+    {
+        return ObjectHolder::Own(Runtime::Bool(false));
+    }
+}
+
 ObjectHolder Negate::Evaluate(Runtime::Closure& closure)
 {
     ObjectHolder node = m_Arg->Evaluate(closure);

@@ -97,12 +97,14 @@ public:
 
 class And : public BinaryOp
 {
+public:
     using BinaryOp::BinaryOp;
     ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
 
 class Or : public BinaryOp
 {
+public:
     using BinaryOp::BinaryOp;
     ObjectHolder Evaluate(Runtime::Closure& closure) override;
 };
