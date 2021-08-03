@@ -16,7 +16,6 @@ public:
 
 private:
 
-    std::unique_ptr<AST::Node> ParseBoolExpr();
     std::unique_ptr<AST::Node> ParseExpr();
     std::unique_ptr<AST::Node> ParseTerm();
     std::unique_ptr<AST::Node> ParseFactor();
@@ -24,10 +23,14 @@ private:
     std::unique_ptr<AST::Node> ParseSimpleStatement();
     std::unique_ptr<AST::Node> ParseAssignmentStatementOrCall();
     std::vector<std::unique_ptr<AST::Node>> ParseLogicalExprList();
+    std::vector<Runtime::Method> ParseMethods();
     std::unique_ptr<AST::Node> ParseLogicalExpr();
     std::unique_ptr<AST::Node> ParseAndTest();
     std::unique_ptr<AST::Node> ParseNotTest();
     std::unique_ptr<AST::Node> ParseComparison();
+    std::unique_ptr<AST::Node> ParseClassDefinition();
+    std::unique_ptr<AST::Node> ParseCondition();
+    std::unique_ptr<AST::Node> ParseBlock();
     std::vector<std::string> ParseDottedIds();
 
     template<typename T>
@@ -42,4 +45,5 @@ private:
 private:
     Lexer& m_Lexer;
     Token m_CurrentToken;
+    Runtime::Closure m_DeclaredClasses;
 };

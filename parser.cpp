@@ -13,9 +13,131 @@ std::unique_ptr<AST::Node> Parser::ParseProgram()
 
 std::unique_ptr<AST::Node> Parser::ParseStatement()
 {
+    if (m_CurrentToken.Is<Tokens::Class>())
+    {
+        Consume<Tokens::Class>();
+        return ParseClassDefinition();
+    }
+    else if (m_CurrentToken.Is<Tokens::If>())
+    {
+        return ParseCondition();
+    }
     std::unique_ptr<AST::Node> statement = ParseSimpleStatement();
     Consume<Tokens::NewLine>();
     return statement;
+}
+
+std::unique_ptr<AST::Node> Parser::ParseClassDefinition()
+{
+    Consume<Tokens::Class>();
+    Token classToken = m_CurrentToken;
+    Consume<Tokens::Id>();
+    std::string className = classToken.As<Tokens::Id>().value;
+
+    const Runtime::Class* baseClass = nullptr;
+    if (m_CurrentToken.Is<Tokens::Lparen>())
+    {
+        Consume<Tokens::Lparen>();
+        Token baseClassToken = m_CurrentToken;
+        Consume<Tokens::Id>();
+        Consume<Tokens::Rparen>();
+
+        std::string baseClassName = baseClassToken.As<Tokens::Id>().value;
+
+        if (auto it = m_DeclaredClasses.find(baseClassName); it == m_DeclaredClasses.end())
+        {
+            throw std::runtime_error("Base class " + baseClassName + " not found for class " + className);
+        }
+        else
+        {
+            baseClass = static_cast<const Runtime::Class*>(it->second.Get());
+        }
+    }
+
+    Consume<Tokens::Colon>();
+    Consume<Tokens::NewLine>();
+    Consume<Tokens::Indent>();
+    std::vector<Runtime::Method> methods = ParseMethods();
+    Consume<Tokens::Dedent>();
+
+    auto [it, inserted] = m_DeclaredClasses.insert({
+        className,
+        ObjectHolder::Own(
+            Runtime::Class(className, std::move(methods), baseClass)
+        )
+    });
+
+    if (!inserted)
+        throw std::runtime_error("Class " + className + " already exists");
+
+    return std::make_unique<AST::ClassDefinition>(it->second);
+}
+
+std::vector<Runtime::Method> Parser::ParseMethods()
+{
+    std::vector<Runtime::Method> methods;
+
+    while (m_CurrentToken.Is<Tokens::Def>())
+    {
+        Runtime::Method method;
+        Consume<Tokens::Def>();
+        Token methodNameToken = m_CurrentToken;
+        Consume<Tokens::Id>();
+        method.name = methodNameToken.As<Tokens::Id>().value;
+        Consume<Tokens::Lparen>();
+
+        if (m_CurrentToken.Is<Tokens::Id>())
+        {
+            do
+            {
+                Token paramToken = m_CurrentToken;
+                Consume<Tokens::Id>();
+                method.formalParams.push_back(paramToken.As<Tokens::Id>().value);
+            } while (m_CurrentToken.Is<Tokens::Comma>());
+        }
+
+        Consume<Tokens::Rparen>();
+        Consume<Tokens::Colon>();
+
+        method.body = ParseBlock();
+        methods.push_back(std::move(method));
+    }
+    return methods;
+}
+
+std::unique_ptr<AST::Node> Parser::ParseCondition()
+{
+    Consume<Tokens::If>();
+    std::unique_ptr<AST::Node> condition = ParseLogicalExpr();
+
+    Consume<Tokens::Colon>();
+    std::unique_ptr<AST::Node> ifBody = ParseBlock();
+
+    std::unique_ptr<AST::Node> elseBody = ParseBlock();
+    if (m_CurrentToken.Is<Tokens::Else>())
+    {
+        Consume<Tokens::Else>();
+        Consume<Tokens::Colon>();
+        elseBody = ParseBlock();
+    }
+
+    return std::make_unique<AST::IfElse>(std::move(condition), std::move(ifBody), std::move(elseBody));
+}
+
+std::unique_ptr<AST::Node> Parser::ParseBlock()
+{
+    Consume<Tokens::NewLine>();
+    Consume<Tokens::Indent>();
+
+    std::unique_ptr<AST::Compound> block = std::make_unique<AST::Compound>();
+
+    while (!m_CurrentToken.Is<Tokens::Dedent>())
+    {
+        block->Add(ParseStatement());
+    }
+
+    Consume<Tokens::Dedent>();
+    return block;
 }
 
 std::unique_ptr<AST::Node> Parser::ParseSimpleStatement()
